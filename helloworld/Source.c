@@ -1,5 +1,6 @@
 #include "raylib.h"
 #include <stdio.h>
+#include <stdlib.h> 
 
 #define MAX_FILEPATH_RECORDED 2
 #define MAX_FILE_SIZE 1024
@@ -14,7 +15,11 @@ int main(void) {
     char* filepath[MAX_FILEPATH_RECORDED] = { 0 };
 
     for (int i = 0; i < MAX_FILEPATH_RECORDED; i++) {
-        filepath[i] = (char*)RL_CALLOC(MAX_FILE_SIZE, 1);
+        filepath[i] = (char*)calloc(MAX_FILE_SIZE, 1); 
+        if (filepath[i] == NULL) {
+            printf("Memory allocation failed for filepath[%d]\n", i);
+            return -1; 
+        }
     }
 
     InitAudioDevice();
@@ -32,7 +37,6 @@ int main(void) {
                 printf("Too many files dropped.\n");
             }
             else {
-                
                 TextCopy(filepath[filepathCounter], droppedFiles.paths[0]);
 
                 if (FileExists(filepath[filepathCounter])) {
@@ -70,7 +74,6 @@ int main(void) {
         EndDrawing();
     }
 
-    
     if (soundLoaded) {
         UnloadSound(sound);
     }
@@ -78,7 +81,7 @@ int main(void) {
     CloseAudioDevice();
 
     for (int i = 0; i < MAX_FILEPATH_RECORDED; i++) {
-        RL_FREE(filepath[i]);
+        free(filepath[i]);
     }
 
     CloseWindow();
